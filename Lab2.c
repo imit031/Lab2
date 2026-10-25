@@ -23,7 +23,7 @@ void clear_buffer(void) {
 }
 void get_farmer_name(char* name) {
 	printf("Введите имя фермера: ");
-	fgets(name, 32, stdin); 
+	fgets(name, 32, stdin);
 	for (int i = 0; name[i] != '\0';i++) {
 		if (name[i] == '\n') {
 			name[i] = '\0';
@@ -32,9 +32,9 @@ void get_farmer_name(char* name) {
 	}
 }
 // Поиск предмета в рюкзаке по названию
-void search_item(char item_names[MAX_ITEMS][MAX_NAME_LEN], int inventory[INVENTORY_SIZE]) { 
+void search_item(char item_names[MAX_ITEMS][MAX_NAME_LEN], int inventory[INVENTORY_SIZE]) {
 	char search_name[MAX_NAME_LEN]; //переменная для хранения введенного слова 
-	printf("Введите названия предмета для поиска: "); 
+	printf("Введите названия предмета для поиска: ");
 	if (scanf_s("%31s", search_name, (unsigned)_countof(search_name)) != 1) { //возвращает 1, если  удалось успешно прочитать ровно одно слово
 		while (getchar() != '\n'); //Если ввод сломался, чистим буфер клавиатуры
 		return;  //досрочно выходим из функции
@@ -67,7 +67,7 @@ void search_item(char item_names[MAX_ITEMS][MAX_NAME_LEN], int inventory[INVENTO
 }
 //запись состояния в дневник фермера 
 void write_diary(int day, int hour, const char* name, char names[MAX_ITEMS][MAX_NAME_LEN], int inv[INVENTORY_SIZE]) { //Функция записи состояния принимает время, имя фермера, каталог названий и рюкзак9
-	FILE* diary = fopen("diary.txt", "a"); 
+	FILE* diary = fopen("diary.txt", "a");
 	if (diary == NULL) { ////Защита,если файл не удалось открыть или создать
 		printf("Ошибка: Не удалось открыть или создать файл diary.txt!\n");
 		return;
@@ -156,9 +156,9 @@ void check_craft(int inv[INVENTORY_SIZE], char names[MAX_ITEMS][MAX_NAME_LEN]) {
 }
 
 void load_item_catalogue(char names[MAX_ITEMS][MAX_NAME_LEN]) { //Функция загрузки каталога принимает массив строк для заполнения именами предметов
-	FILE* file = fopen("items.txt", "r"); 
+	FILE* file = fopen("items.txt", "r");
 	if (file == NULL) {   //Защита: если файл items.txt отсутствует на диске
-		printf("[Предупреждение]: Файл items.txt не найден!Загружен каталог по умолчанию.\n"); 
+		printf("[Предупреждение]: Файл items.txt не найден!Загружен каталог по умолчанию.\n");
 		strcpy(names[0], "Пусто");
 		strcpy(names[1], "Дерево");
 		strcpy(names[2], "Камень");
@@ -169,18 +169,18 @@ void load_item_catalogue(char names[MAX_ITEMS][MAX_NAME_LEN]) { //Функция
 		strcpy(names[7], "Вода");
 		strcpy(names[8], "Урожай");
 		strcpy(names[9], "Молоко");
-		return; 
+		return;
 	}
 	int id; //еременная для временного хранения считанного из файла номера предмета
-	char buffer[MAX_NAME_LEN] = { 0 }; 
+	char buffer[MAX_NAME_LEN] = { 0 };
 	while (fscanf(file, "%d %31s", &id, buffer) == 2) {  // читаем файл, пока fscanf успешно находит пару из числа и слова 
 		if (id >= 0 && id < MAX_ITEMS) {
 			strcpy(names[id], buffer);  //берем считанное слово из buffer и записываем под номером id в таблицу 
 		}
 	}
-	fclose(file); 
-	printf("[Успешно]: Каталог предметов загружен из файла items.txt.\n"); 
-	
+	fclose(file);
+	printf("[Успешно]: Каталог предметов загружен из файла items.txt.\n");
+
 }
 int main() {
 	setlocale(LC_CTYPE, "rus"); // чтобы буквы нормальные были 
@@ -209,7 +209,7 @@ int main() {
 		printf("5.Выбросить предмет\n");
 		printf("6.Очистка от мусора\n");
 		printf("7.Поиск предмета по названию\n");
-		printf("8.Записать состояние в дневник фермера (diary.txt)\n"); 
+		printf("8.Записать состояние в дневник фермера (diary.txt)\n");
 		printf("9.Проверить рецепт крафта.(input.txt)\n");
 		if (scanf_s("%d", &user_choice) != 1) {
 			printf("Неверный ввод\n");
@@ -305,12 +305,12 @@ int main() {
 			}
 			printf("Очистка завершена.Очещено слотов: %d\n", cleared_slots);
 			break;
-		case 7: {		
+		case 7: {
 			search_item(item_names, inventory);
 			break;
 		}
 
-			
+
 		case 8: {
 			write_diary(current_day, current_hour, farmer_name, item_names, inventory);
 			break;
@@ -319,9 +319,9 @@ int main() {
 		case 9: {
 			check_craft(inventory, item_names);
 			break;
-		
 
-	
+
+
 		}
 		default:
 			system("cls"); //чистка строки
@@ -329,8 +329,8 @@ int main() {
 			scanf_s("%*s");
 			continue; // возвращает в начало цикла в меню 		
 		}
-	} 
-} 
+	}
+}
 
 
 
