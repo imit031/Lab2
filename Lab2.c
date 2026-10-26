@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <string.h> 
+#include <math.h> // Добавили для функции sqrt (туман войны)
+
 
 #define INVENTORY_SIZE 10
 #define MAX_ITEMS 10
@@ -17,10 +19,12 @@
 #define ITEM_VODA 7 
 #define ITEM_UROZHAY 8
 #define ITEM_MOLOKO 9
+
 void clear_buffer(void) {
 	int c;
 	while ((c = getchar()) != '\n' && c != EOF);
 }
+
 void get_farmer_name(char* name) {
 	printf("Введите имя фермера: ");
 	fgets(name, 32, stdin);
@@ -31,7 +35,7 @@ void get_farmer_name(char* name) {
 		}
 	}
 }
-// Поиск предмета в рюкзаке по названию
+
 void search_item(char item_names[MAX_ITEMS][MAX_NAME_LEN], int inventory[INVENTORY_SIZE]) {
 	char search_name[MAX_NAME_LEN]; //переменная для хранения введенного слова 
 	printf("Введите названия предмета для поиска: ");
@@ -65,6 +69,7 @@ void search_item(char item_names[MAX_ITEMS][MAX_NAME_LEN], int inventory[INVENTO
 	}
 	printf("\n");
 }
+
 //запись состояния в дневник фермера 
 void write_diary(int day, int hour, const char* name, char names[MAX_ITEMS][MAX_NAME_LEN], int inv[INVENTORY_SIZE]) { //Функция записи состояния принимает время, имя фермера, каталог названий и рюкзак9
 	FILE* diary = fopen("diary.txt", "a");
@@ -80,6 +85,7 @@ void write_diary(int day, int hour, const char* name, char names[MAX_ITEMS][MAX_
 	fclose(diary);
 	printf("[Успешно]: Состояние фермы записано в diary.txt.\n");
 }
+
 //Проверка рецептов крафта 
 void check_craft(int inv[INVENTORY_SIZE], char names[MAX_ITEMS][MAX_NAME_LEN]) {  //Функция проверки рецептов крафта принимает рюкзак фермера и каталог названий
 	printf("--- ПРОВЕРКА РЕЦЕПТОВ КРАФТА ---\n");
@@ -182,9 +188,199 @@ void load_item_catalogue(char names[MAX_ITEMS][MAX_NAME_LEN]) { //Функция
 	printf("[Успешно]: Каталог предметов загружен из файла items.txt.\n");
 
 }
+
+// ================= НОВЫЕ ФУНКЦИИ ДЛЯ 4 ЛАБЫ =================
+
+void print_map(char** map, int player_y, int player_x, int level, int height, int width) {
+	system("cls"); //Очищаем экран перед каждым показом
+	int radius = 4; // Радиус видимости для тумана
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			// Считаем расстояние от игрока до текущей клетки (теорема Пифагора)
+			int dy = i - player_y;
+			int dx = j - player_x;
+			double dist = sqrt(dy * dy + dx * dx);
+
+			// Если это 1-й этаж или клетка в радиусе видимости, показываем её
+			if (level == 1 || dist <= radius) {
+				printf("%c", map[i][j]);
+			}
+			else {
+				printf("?"); // Иначе скрываем туманом
+			}
+		}
+		printf("\n");
+	}
+}
+
+void free_map(char** map, int height) {
+	if (map == NULL) return; //Если карты в памяти и так нет — ничего делать не нужно
+	for (int i = 0; i < height; i++) { //высота нужна чтобы компьютер знал, сколько именно строк ему придется удалить в цикле
+		free(map[i]); //Освобождаем память, выделенную под каждую строку
+	}
+	free(map); //Освобождаем память от главного списка, где хранились адреса этих строк
+}
+
+void spawn_player(char** map, int height, int width, int level, int* out_y, int* out_x) {
+	// Ищем свободную клетку для героя
+	while (1) {
+		int y = rand() % (height - 2) + 1; // + 1 — сдвигает координату вперёд, чтобы фермер не заспавнился внутри стены
+		int x = rand() % (width - 2) + 1;
+		if (map[y][x] == '.') {
+			map[y][x] = '@'; // Ставим героя
+			*out_y = y; //Сохраняем координату Y игрока
+			*out_x = x;
+			break;
+		}
+	}
+
+	// Если этаж не первый, ставим U (лестницу вверх) рядом с героем
+	if (level > 1) {
+		int dirs[4][2] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} }; //проверяем 4 стороны вокруг себя
+		for (int i = 0; i < 4; i++) {
+			int ny = *out_y + dirs[i][0];
+			int nx = *out_x + dirs[i][1];
+			if (ny > 0 && ny < height - 1 && nx > 0 && nx < width - 1 && map[ny][nx] == '.') {
+				map[ny][nx] = 'U'; //ставим лестницу в первую свободную клетку из 4
+				break;
+			}
+		}
+	}
+}
+
+void generate_map(char*** map_ptr, int* out_height, int* out_width) {
+	int height = rand() % 26 + 5; //26 возможных вариантов(от 5 до 30), 5-минимальная высота 
+	int width = rand() % 26 + 5;
+	*out_height = height; // Записываем по адресу высоту 
+	*out_width = width;
+	char** map = (char**)malloc(height * sizeof(char*)); //Просим память под список адресов строк карты
+	for (int i = 0; i < height; i++) { //Запускаем цикл, чтобы выделить память отдельно под каждую строку карты
+		map[i] = (char*)malloc(width * sizeof(char)); //Просим память под символы (ширину) для текущей строки под номером i
+	}
+	*map_ptr = map; //отдаем адрес в главную программу 
+
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) { //идет по клеткам строки слева направо (горизонталь)
+			if (i == 0 || i == height - 1 || j == 0 || j == width - 1) { //если мы находимся на самом краю (на границе) карты
+				map[i][j] = '#';  //Записываем в эту крайнюю клетку символ непроходимой стены
+			}
+			else {
+				int chance = rand() % 100; //Получаем случайное число от 0 до 99
+				if (chance < 15) {
+					map[i][j] = 'T'; //15% шанс, что выпадет дерево
+				}
+				else if (chance >= 15 && chance < 25) {
+					map[i][j] = 'R';  //10% шанс, что выпадет камень(числа 15 - 24)
+				}
+				else {
+					map[i][j] = '.';
+				}
+			}
+		}
+	}
+
+	// Находим случайную СВОБОДНУЮ ячейку '.' для лестницы вниз 'D'
+	while (1) {
+		int d_y = rand() % (height - 2) + 1;
+		int d_x = rand() % (width - 2) + 1;
+
+		if (map[d_y][d_x] == '.') {
+			map[d_y][d_x] = 'D'; // Ставим лестницу вниз
+			// Прорубаем коридор от D влево, чтобы игрок мог дойти
+			for (int i = d_x; i > 0; i--) {
+				if (map[d_y][i] == 'T' || map[d_y][i] == 'R') {
+					map[d_y][i] = '.'; // Уничтожаем дерево или камень
+				}
+			}
+			break; // Успешно поставили, выходим из цикла
+		}
+	}
+}
+
+void start_adventure() {
+	char** map = NULL; //Переменная для карты, пока пустая
+	int height = 0; //Будущая высота карты
+	int width = 0; //Будущая ширина карты
+	int player_y = 0; //Строка, на которой стоит фермер 
+	int player_x = 0; // Столбец, на котором стоит фермер
+	int level = 1; //текущий этаж 
+
+	generate_map(&map, &height, &width); //Вызываем генерацию карты и спавн игрока
+	spawn_player(map, height, width, level, &player_y, &player_x);
+
+	while (1) {
+		char original_cell = map[player_y][player_x];
+		map[player_y][player_x] = '@';
+
+		print_map(map, player_y, player_x, level, height, width);
+
+		printf("=== Глубина: %d ===\n", level);
+		printf("\nУправление: W-вверх, A-влево, S-вниз, D-вправо, Q-вернуться домой\n");
+
+		// Возвращаем на место то, что было под игроком
+		if (original_cell == '@') {
+			map[player_y][player_x] = '.';
+		}
+		else {
+			map[player_y][player_x] = original_cell;
+		}
+
+		printf("Ваш ход: ");
+		char choice;
+		if (scanf_s(" %c", &choice, 1) != 1) {
+			clear_buffer();
+			continue;
+		}
+		clear_buffer();
+
+		if (choice == 'q' || choice == 'Q') { //Если нажали Q - проверяем, стоим ли на лестнице вверх
+			if (original_cell == 'U') {
+				free_map(map, height);
+				break;
+			}
+			else {
+				printf("\nВыход домой возможен только на лестнице вверх (U)!\n");
+				system("pause");
+				continue;
+			}
+		}
+
+		int next_y = player_y;
+		int next_x = player_x;
+
+		if (choice == 'w' || choice == 'W') next_y--; //Шаг вверх (минус строка)
+		else if (choice == 's' || choice == 'S') next_y++; // Шаг вниз (плюс строка) 
+		else if (choice == 'a' || choice == 'A') next_x--; //Шаг влево (минус столбец)
+		else if (choice == 'd' || choice == 'D') next_x++; // Шаг вправо (плюс столбец)
+
+		if (next_y >= 0 && next_y < height && next_x >= 0 && next_x < width) {
+			char target = map[next_y][next_x];
+			if (target == '#' || target == 'T' || target == 'R') {
+				printf("\nТам препятствие! Путь заблокирован\n");
+				system("pause");
+			}
+			else if (target == 'D') { // Если наступили на лестницу вниз
+				
+				free_map(map, height); // Удаляем старую карту из памяти
+				level++; // Увеличиваем счетчик глубины
+				generate_map(&map, &height, &width); // Генерируем новую карту
+				spawn_player(map, height, width, level, &player_y, &player_x); // Ставим героя
+				
+			}
+			else {
+				player_y = next_y;
+				player_x = next_x;
+			}
+		}
+	}
+}
+
+
+
 int main() {
 	setlocale(LC_CTYPE, "rus"); // чтобы буквы нормальные были 
 	system("chcp 1251 > nul"); // чтобы буквы нормальные были 
+	srand(time(NULL)); 
 	char farmer_name[32] = "фермер";
 	char item_names[MAX_ITEMS][MAX_NAME_LEN];
 	load_item_catalogue(item_names);
@@ -211,6 +407,8 @@ int main() {
 		printf("7.Поиск предмета по названию\n");
 		printf("8.Записать состояние в дневник фермера (diary.txt)\n");
 		printf("9.Проверить рецепт крафта.(input.txt)\n");
+		printf("10.Отправиться в приключение\n"); 
+
 		if (scanf_s("%d", &user_choice) != 1) {
 			printf("Неверный ввод\n");
 			clear_buffer();
@@ -310,7 +508,6 @@ int main() {
 			break;
 		}
 
-
 		case 8: {
 			write_diary(current_day, current_hour, farmer_name, item_names, inventory);
 			break;
@@ -319,10 +516,10 @@ int main() {
 		case 9: {
 			check_craft(inventory, item_names);
 			break;
-
-
-
 		}
+		case 10:
+			start_adventure();
+			break;
 		default:
 			system("cls"); //чистка строки
 			printf("Неверный пункт ввода меню\n");
@@ -331,8 +528,6 @@ int main() {
 		}
 	}
 }
-
-
 
 
 
