@@ -4,7 +4,7 @@
 #define INVENTORY_SIZE 10
 #define EQUIPMENT_SLOTS 3
 // Перечисление для типов слотов(голова, тело, обувь)
-typedef enum {
+typedef enum { 
     SLOT_HEAD = 0,
     SLOT_BODY = 1,
     SLOT_FEET = 2
