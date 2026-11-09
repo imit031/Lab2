@@ -9,7 +9,7 @@
 #define BASE_GOLD_REWARD 10
 
 void generate_map(char*** map_ptr, int* out_height, int* out_width) {
-	int height = rand() % 26 + 5; // от 5 до 30
+	int height = rand() % 26 + 5; // РѕС‚ 5 РґРѕ 30
 	int width = rand() % 26 + 5;
 	*out_height = height;
 	*out_width = width;
@@ -34,14 +34,14 @@ void generate_map(char*** map_ptr, int* out_height, int* out_width) {
 		}
 	}
 
-	// Находим случайную свободную ячейку '.' для лестницы вниз 
+	// РќР°С…РѕРґРёРј СЃР»СѓС‡Р°Р№РЅСѓСЋ СЃРІРѕР±РѕРґРЅСѓСЋ СЏС‡РµР№РєСѓ '.' РґР»СЏ Р»РµСЃС‚РЅРёС†С‹ РІРЅРёР· 
 	while (1) {
 		int d_y = rand() % (height - 2) + 1;
 		int d_x = rand() % (width - 2) + 1;
 
 		if (map[d_y][d_x] == '.') {
-			map[d_y][d_x] = 'D'; // Ставим лестницу вниз
-			// Прорубаем коридор от D влево
+			map[d_y][d_x] = 'D'; // РЎС‚Р°РІРёРј Р»РµСЃС‚РЅРёС†Сѓ РІРЅРёР·
+			// РџСЂРѕСЂСѓР±Р°РµРј РєРѕСЂРёРґРѕСЂ РѕС‚ D РІР»РµРІРѕ
 			for (int i = d_x; i > 0; i--) {
 				if (map[d_y][i] == 'T' || map[d_y][i] == 'R') {
 					map[d_y][i] = '.';
@@ -53,21 +53,21 @@ void generate_map(char*** map_ptr, int* out_height, int* out_width) {
 }
 
 void print_map(char** map, int player_y, int player_x, int level, int height, int width) {
-	system("cls"); //Очищаем экран перед каждым показом
-	int radius = 4; // Радиус видимости для тумана
+	system("cls"); //РћС‡РёС‰Р°РµРј СЌРєСЂР°РЅ РїРµСЂРµРґ РєР°Р¶РґС‹Рј РїРѕРєР°Р·РѕРј
+	int radius = 4; // Р Р°РґРёСѓСЃ РІРёРґРёРјРѕСЃС‚Рё РґР»СЏ С‚СѓРјР°РЅР°
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			// Считаем расстояние от игрока до текущей клетки (теорема Пифагора)
+			// РЎС‡РёС‚Р°РµРј СЂР°СЃСЃС‚РѕСЏРЅРёРµ РѕС‚ РёРіСЂРѕРєР° РґРѕ С‚РµРєСѓС‰РµР№ РєР»РµС‚РєРё (С‚РµРѕСЂРµРјР° РџРёС„Р°РіРѕСЂР°)
 			int dy = i - player_y;
 			int dx = j - player_x;
 			double dist = sqrt(dy * dy + dx * dx);
 
-			// Если это 1-й этаж или клетка в радиусе видимости, показываем её
+			// Р•СЃР»Рё СЌС‚Рѕ 1-Р№ СЌС‚Р°Р¶ РёР»Рё РєР»РµС‚РєР° РІ СЂР°РґРёСѓСЃРµ РІРёРґРёРјРѕСЃС‚Рё, РїРѕРєР°Р·С‹РІР°РµРј РµС‘
 			if (level == 1 || dist <= radius) {
 				printf("%c", map[i][j]);
 			}
 			else {
-				printf("?"); // Иначе скрываем туманом
+				printf("?"); // РРЅР°С‡Рµ СЃРєСЂС‹РІР°РµРј С‚СѓРјР°РЅРѕРј
 			}
 		}
 		printf("\n");
@@ -75,34 +75,34 @@ void print_map(char** map, int player_y, int player_x, int level, int height, in
 }
 
 void free_map(char** map, int height) {
-	if (map == NULL) return; //Если карты в памяти и так нет — ничего делать не нужно
-	for (int i = 0; i < height; i++) { //высота нужна чтобы компьютер знал, сколько именно строк ему придется удалить в цикле
-		free(map[i]); //Освобождаем память, выделенную под каждую строку
+	if (map == NULL) return; //Р•СЃР»Рё РєР°СЂС‚С‹ РІ РїР°РјСЏС‚Рё Рё С‚Р°Рє РЅРµС‚ вЂ” РЅРёС‡РµРіРѕ РґРµР»Р°С‚СЊ РЅРµ РЅСѓР¶РЅРѕ
+	for (int i = 0; i < height; i++) { //РІС‹СЃРѕС‚Р° РЅСѓР¶РЅР° С‡С‚РѕР±С‹ РєРѕРјРїСЊСЋС‚РµСЂ Р·РЅР°Р», СЃРєРѕР»СЊРєРѕ РёРјРµРЅРЅРѕ СЃС‚СЂРѕРє РµРјСѓ РїСЂРёРґРµС‚СЃСЏ СѓРґР°Р»РёС‚СЊ РІ С†РёРєР»Рµ
+		free(map[i]); //РћСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ, РІС‹РґРµР»РµРЅРЅСѓСЋ РїРѕРґ РєР°Р¶РґСѓСЋ СЃС‚СЂРѕРєСѓ
 	}
-	free(map); //Освобождаем память от главного списка, где хранились адреса этих строк
+	free(map); //РћСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ РѕС‚ РіР»Р°РІРЅРѕРіРѕ СЃРїРёСЃРєР°, РіРґРµ С…СЂР°РЅРёР»РёСЃСЊ Р°РґСЂРµСЃР° СЌС‚РёС… СЃС‚СЂРѕРє
 }
 
 void spawn_player(char** map, int height, int width, int level, int* out_y, int* out_x) {
-	// Ищем свободную клетку для героя
+	// РС‰РµРј СЃРІРѕР±РѕРґРЅСѓСЋ РєР»РµС‚РєСѓ РґР»СЏ РіРµСЂРѕСЏ
 	while (1) {
-		int y = rand() % (height - 2) + 1; // + 1 — сдвигает координату вперёд
+		int y = rand() % (height - 2) + 1; // + 1 вЂ” СЃРґРІРёРіР°РµС‚ РєРѕРѕСЂРґРёРЅР°С‚Сѓ РІРїРµСЂС‘Рґ
 		int x = rand() % (width - 2) + 1;
 		if (map[y][x] == '.') {
-			map[y][x] = '@'; // Ставим героя
-			*out_y = y; //Сохраняем координату Y игрока
+			map[y][x] = '@'; // РЎС‚Р°РІРёРј РіРµСЂРѕСЏ
+			*out_y = y; //РЎРѕС…СЂР°РЅСЏРµРј РєРѕРѕСЂРґРёРЅР°С‚Сѓ Y РёРіСЂРѕРєР°
 			*out_x = x;
 			break;
 		}
 	}
 
-	// Если этаж не первый, ставим U (лестницу вверх) рядом с героем
+	// Р•СЃР»Рё СЌС‚Р°Р¶ РЅРµ РїРµСЂРІС‹Р№, СЃС‚Р°РІРёРј U (Р»РµСЃС‚РЅРёС†Сѓ РІРІРµСЂС…) СЂСЏРґРѕРј СЃ РіРµСЂРѕРµРј
 	if (level > 1) {
-		int dirs[4][2] = { { -1, 0 },{ 1, 0 },{ 0, -1 },{ 0, 1 } }; //проверяем 4 стороны
+		int dirs[4][2] = { { -1, 0 },{ 1, 0 },{ 0, -1 },{ 0, 1 } }; //РїСЂРѕРІРµСЂСЏРµРј 4 СЃС‚РѕСЂРѕРЅС‹
 		for (int i = 0; i < 4; i++) {
 			int ny = *out_y + dirs[i][0];
 			int nx = *out_x + dirs[i][1];
 			if (ny > 0 && ny < height - 1 && nx > 0 && nx < width - 1 && map[ny][nx] == '.') {
-				map[ny][nx] = 'U'; //ставим лестницу в первую свободную клетку
+				map[ny][nx] = 'U'; //СЃС‚Р°РІРёРј Р»РµСЃС‚РЅРёС†Сѓ РІ РїРµСЂРІСѓСЋ СЃРІРѕР±РѕРґРЅСѓСЋ РєР»РµС‚РєСѓ
 				break;
 			}
 		}
@@ -110,14 +110,14 @@ void spawn_player(char** map, int height, int width, int level, int* out_y, int*
 }
 
 void start_adventure(Player* p, int* current_day, int* current_hour) {
-	char** map = NULL; //Переменная для карты, пока пустая
-	int height = 0; //Будущая высота карты
-	int width = 0; //Будущая ширина карты
-	int player_y = 0; //Строка, на которой стоит фермер 
-	int player_x = 0; // Столбец, на котором стоит фермер
-	int level = 1; //текущий этаж 
+	char** map = NULL; //РџРµСЂРµРјРµРЅРЅР°СЏ РґР»СЏ РєР°СЂС‚С‹, РїРѕРєР° РїСѓСЃС‚Р°СЏ
+	int height = 0; //Р‘СѓРґСѓС‰Р°СЏ РІС‹СЃРѕС‚Р° РєР°СЂС‚С‹
+	int width = 0; //Р‘СѓРґСѓС‰Р°СЏ С€РёСЂРёРЅР° РєР°СЂС‚С‹
+	int player_y = 0; //РЎС‚СЂРѕРєР°, РЅР° РєРѕС‚РѕСЂРѕР№ СЃС‚РѕРёС‚ С„РµСЂРјРµСЂ 
+	int player_x = 0; // РЎС‚РѕР»Р±РµС†, РЅР° РєРѕС‚РѕСЂРѕРј СЃС‚РѕРёС‚ С„РµСЂРјРµСЂ
+	int level = 1; //С‚РµРєСѓС‰РёР№ СЌС‚Р°Р¶ 
 
-	generate_map(&map, &height, &width); //Вызываем генерацию карты и спавн игрока
+	generate_map(&map, &height, &width); //Р’С‹Р·С‹РІР°РµРј РіРµРЅРµСЂР°С†РёСЋ РєР°СЂС‚С‹ Рё СЃРїР°РІРЅ РёРіСЂРѕРєР°
 	spawn_player(map, height, width, level, &player_y, &player_x);
 
 	while (1) {
@@ -125,12 +125,12 @@ void start_adventure(Player* p, int* current_day, int* current_hour) {
 		map[player_y][player_x] = '@';
 		print_map(map, player_y, player_x, level, height, width);
 
-		// HUD (Интерфейс)
-		printf("HP: %d/%d | Выносливость: %d/%d | Золото: %d | Этаж: %d | Время: %02d:00\n", p->hp, p->max_hp, p->stamina, p->max_stamina, p->gold, level, *current_hour);
-		printf("=== Глубина: %d ===\n", level);
-		printf("\nУправление: W-вверх, A-влево, S-вниз, D-вправо, Q-вернуться домой\n");
+		// HUD (РРЅС‚РµСЂС„РµР№СЃ)
+		printf("HP: %d/%d | Р’С‹РЅРѕСЃР»РёРІРѕСЃС‚СЊ: %d/%d | Р—РѕР»РѕС‚Рѕ: %d | Р­С‚Р°Р¶: %d | Р’СЂРµРјСЏ: %02d:00\n", p->hp, p->max_hp, p->stamina, p->max_stamina, p->gold, level, *current_hour);
+		printf("=== Р“Р»СѓР±РёРЅР°: %d ===\n", level);
+		printf("\nРЈРїСЂР°РІР»РµРЅРёРµ: W-РІРІРµСЂС…, A-РІР»РµРІРѕ, S-РІРЅРёР·, D-РІРїСЂР°РІРѕ, Q-РІРµСЂРЅСѓС‚СЊСЃСЏ РґРѕРјРѕР№\n");
 
-		// Возвращаем на место то, что было под игроком
+		// Р’РѕР·РІСЂР°С‰Р°РµРј РЅР° РјРµСЃС‚Рѕ С‚Рѕ, С‡С‚Рѕ Р±С‹Р»Рѕ РїРѕРґ РёРіСЂРѕРєРѕРј
 		if (original_cell == '@') {
 			map[player_y][player_x] = '.';
 		}
@@ -138,7 +138,7 @@ void start_adventure(Player* p, int* current_day, int* current_hour) {
 			map[player_y][player_x] = original_cell;
 		}
 
-		printf("Ваш ход: ");
+		printf("Р’Р°С€ С…РѕРґ: ");
 		char choice;
 		if (scanf_s(" %c", &choice, 1) != 1) {
 			clear_buffer();
@@ -146,13 +146,13 @@ void start_adventure(Player* p, int* current_day, int* current_hour) {
 		}
 		clear_buffer();
 
-		if (choice == 'q' || choice == 'Q') { //Если нажали Q
+		if (choice == 'q' || choice == 'Q') { //Р•СЃР»Рё РЅР°Р¶Р°Р»Рё Q
 			if (original_cell == 'U') {
 				free_map(map, height);
 				break;
 			}
 			else {
-				printf("\nВыход домой возможен только на лестнице вверх (U)!\n");
+				printf("\nР’С‹С…РѕРґ РґРѕРјРѕР№ РІРѕР·РјРѕР¶РµРЅ С‚РѕР»СЊРєРѕ РЅР° Р»РµСЃС‚РЅРёС†Рµ РІРІРµСЂС… (U)!\n");
 				system("pause");
 				continue;
 			}
@@ -161,18 +161,18 @@ void start_adventure(Player* p, int* current_day, int* current_hour) {
 		int next_y = player_y;
 		int next_x = player_x;
 
-		if (choice == 'w' || choice == 'W') next_y--; //Шаг вверх
-		else if (choice == 's' || choice == 'S') next_y++; // Шаг вниз
-		else if (choice == 'a' || choice == 'A') next_x--; //Шаг влево
-		else if (choice == 'd' || choice == 'D') next_x++; // Шаг вправо
+		if (choice == 'w' || choice == 'W') next_y--; //РЁР°Рі РІРІРµСЂС…
+		else if (choice == 's' || choice == 'S') next_y++; // РЁР°Рі РІРЅРёР·
+		else if (choice == 'a' || choice == 'A') next_x--; //РЁР°Рі РІР»РµРІРѕ
+		else if (choice == 'd' || choice == 'D') next_x++; // РЁР°Рі РІРїСЂР°РІРѕ
 
 		if (next_y >= 0 && next_y < height && next_x >= 0 && next_x < width) {
 			char target = map[next_y][next_x];
 			if (target == '#' || target == 'T' || target == 'R') {
-				printf("\nТам препятствие! Путь заблокирован\n");
+				printf("\nРўР°Рј РїСЂРµРїСЏС‚СЃС‚РІРёРµ! РџСѓС‚СЊ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ\n");
 				system("pause");
 			}
-			else if (target == 'D') { // Если наступили на лестницу вниз
+			else if (target == 'D') { // Р•СЃР»Рё РЅР°СЃС‚СѓРїРёР»Рё РЅР° Р»РµСЃС‚РЅРёС†Сѓ РІРЅРёР·
 				free_map(map, height);
 				level++;
 				generate_map(&map, &height, &width);
@@ -186,31 +186,31 @@ void start_adventure(Player* p, int* current_day, int* current_hour) {
 					*current_hour = 0;
 					*current_day += 1;
 				}
-				// Награда за исследование
+				// РќР°РіСЂР°РґР° Р·Р° РёСЃСЃР»РµРґРѕРІР°РЅРёРµ
 				int reward = BASE_GOLD_REWARD * level;
 				p->gold += reward;
-				printf("\nВы спустились на %d этаж! Награда: %d золота.\n", level, reward);
+				printf("\nР’С‹ СЃРїСѓСЃС‚РёР»РёСЃСЊ РЅР° %d СЌС‚Р°Р¶! РќР°РіСЂР°РґР°: %d Р·РѕР»РѕС‚Р°.\n", level, reward);
 			}
 			else {
 				player_y = next_y;
 				player_x = next_x;
 
-				// Трата 1 выносливости за шаг
+				// РўСЂР°С‚Р° 1 РІС‹РЅРѕСЃР»РёРІРѕСЃС‚Рё Р·Р° С€Р°Рі
 				p->stamina -= 1;
 				if (p->stamina < 0) p->stamina = 0;
 			}
 		}
-		// экстренная эвакуация 
+		// СЌРєСЃС‚СЂРµРЅРЅР°СЏ СЌРІР°РєСѓР°С†РёСЏ 
 		if (p->stamina <= 0 || (*current_hour == 2 && *current_day >= 1)) {
 			if (p->stamina > 0 && *current_hour == 2) {
-				printf("\nНаступило 02:00 ночи! Фермер падает без сил.\n");
+				printf("\nРќР°СЃС‚СѓРїРёР»Рѕ 02:00 РЅРѕС‡Рё! Р¤РµСЂРјРµСЂ РїР°РґР°РµС‚ Р±РµР· СЃРёР».\n");
 			}
 			else {
-				printf("\nВы упали без сил! Спасательная служба доставляет вас домой.\n");
+				printf("\nР’С‹ СѓРїР°Р»Рё Р±РµР· СЃРёР»! РЎРїР°СЃР°С‚РµР»СЊРЅР°СЏ СЃР»СѓР¶Р±Р° РґРѕСЃС‚Р°РІР»СЏРµС‚ РІР°СЃ РґРѕРјРѕР№.\n");
 			}
 			int lost_gold = p->gold / 2;
 			p->gold -= lost_gold;
-			printf("За услуги забрали %d золота. У вас осталось %d золота.\n", lost_gold, p->gold);
+			printf("Р—Р° СѓСЃР»СѓРіРё Р·Р°Р±СЂР°Р»Рё %d Р·РѕР»РѕС‚Р°. РЈ РІР°СЃ РѕСЃС‚Р°Р»РѕСЃСЊ %d Р·РѕР»РѕС‚Р°.\n", lost_gold, p->gold);
 
 			free_map(map, height);
 			system("pause");
