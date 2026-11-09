@@ -1,152 +1,152 @@
-#define _CRT_SECURE_NO_WARNINGS //отключение предупреждений безопасности(чтобы не было ошибок)
+#define _CRT_SECURE_NO_WARNINGS //Г®ГІГЄГ«ГѕГ·ГҐГ­ГЁГҐ ГЇГ°ГҐГ¤ГіГЇГ°ГҐГ¦Г¤ГҐГ­ГЁГ© ГЎГҐГ§Г®ГЇГ Г±Г­Г®Г±ГІГЁ(Г·ГІГ®ГЎГ» Г­ГҐ ГЎГ»Г«Г® Г®ГёГЁГЎГ®ГЄ)
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string.h> 
 #include "player.h"
-#include "utils.h"  //  очистка буфера
-void create_player(Player** p) { // принимает указатель на указатель на структуру Player
-	*p = (Player*)malloc(sizeof(Player)); //выделяем память под структуру 
+#include "utils.h"  //  Г®Г·ГЁГ±ГІГЄГ  ГЎГіГґГҐГ°Г 
+void create_player(Player** p) { // ГЇГ°ГЁГ­ГЁГ¬Г ГҐГІ ГіГЄГ Г§Г ГІГҐГ«Гј Г­Г  ГіГЄГ Г§Г ГІГҐГ«Гј Г­Г  Г±ГІГ°ГіГЄГІГіГ°Гі Player
+	*p = (Player*)malloc(sizeof(Player)); //ГўГ»Г¤ГҐГ«ГїГҐГ¬ ГЇГ Г¬ГїГІГј ГЇГ®Г¤ Г±ГІГ°ГіГЄГІГіГ°Гі 
     if (*p == NULL) {
-        printf("Ошибка: не удалось выделить память под игрока\n");
+        printf("ГЋГёГЁГЎГЄГ : Г­ГҐ ГіГ¤Г Г«Г®Г±Гј ГўГ»Г¤ГҐГ«ГЁГІГј ГЇГ Г¬ГїГІГј ГЇГ®Г¤ ГЁГЈГ°Г®ГЄГ \n");
         return;
     }
-    printf("Введите имя фермера: ");
+    printf("Г‚ГўГҐГ¤ГЁГІГҐ ГЁГ¬Гї ГґГҐГ°Г¬ГҐГ°Г : ");
     fgets((*p)->name, 32, stdin);
-    // Убираем Enter из имени
+    // Г“ГЎГЁГ°Г ГҐГ¬ Enter ГЁГ§ ГЁГ¬ГҐГ­ГЁ
     for (int i = 0; (*p)->name[i] != '\0'; i++) {
         if ((*p)->name[i] == '\n') {
             (*p)->name[i] = '\0';
             break;
         }
     } 
-    if (strlen((*p)->name) == 0) {  //если пользователь ничего не ввел
-        strcpy((*p)->name, "Безымянный");
+    if (strlen((*p)->name) == 0) {  //ГҐГ±Г«ГЁ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«Гј Г­ГЁГ·ГҐГЈГ® Г­ГҐ ГўГўГҐГ«
+        strcpy((*p)->name, "ГЃГҐГ§Г»Г¬ГїГ­Г­Г»Г©");
     }
     (*p)->max_hp = 100;
     (*p)->hp = 100;
     (*p)->max_stamina = 50; 
     (*p)->stamina = 50;
     (*p)->gold = 0;
-    int start_inv[INVENTORY_SIZE] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }; // ID предметов
+    int start_inv[INVENTORY_SIZE] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }; // ID ГЇГ°ГҐГ¤Г¬ГҐГІГ®Гў
     for (int i = 0; i < INVENTORY_SIZE; i++) {
-        (*p)->inventory[i] = start_inv[i]; //копируем инвентарь в структуру 
+        (*p)->inventory[i] = start_inv[i]; //ГЄГ®ГЇГЁГ°ГіГҐГ¬ ГЁГ­ГўГҐГ­ГІГ Г°Гј Гў Г±ГІГ°ГіГЄГІГіГ°Гі 
     }
-    // Изначально экипировка пуста
+    // Г€Г§Г­Г Г·Г Г«ГјГ­Г® ГЅГЄГЁГЇГЁГ°Г®ГўГЄГ  ГЇГіГ±ГІГ 
     for (int i = 0; i < EQUIPMENT_SLOTS; i++) {
-        strcpy((*p)->equipment[i].name, "Пусто");
+        strcpy((*p)->equipment[i].name, "ГЏГіГ±ГІГ®");
         (*p)->equipment[i].bonus_hp = 0;
         (*p)->equipment[i].bonus_stamina = 0;
         (*p)->equipment[i].slot = (EquipSlot)i;
     }
-    printf("Персонаж %s успешно создан!\n", (*p)->name);
+    printf("ГЏГҐГ°Г±Г®Г­Г Г¦ %s ГіГ±ГЇГҐГёГ­Г® Г±Г®Г§Г¤Г Г­!\n", (*p)->name);
 }
 void print_player_card(Player* p, int day, int hour, char item_names[MAX_ITEMS][MAX_NAME_LEN]) {
     if (p == NULL) {
-        printf("Ошибка: персонаж не создан!\n");
+        printf("ГЋГёГЁГЎГЄГ : ГЇГҐГ°Г±Г®Г­Г Г¦ Г­ГҐ Г±Г®Г§Г¤Г Г­!\n");
         return;
     }
-    printf("\n=== КАРТОЧКА ПЕРСОНАЖА ===\n");
-    printf("Имя: %s\n", p->name);
-    printf("Здоровье: %d/%d\n", p->hp, p->max_hp);
-    printf("Выносливость: %d/%d\n", p->stamina, p->max_stamina);
-    printf("Золото: %d\n", p->gold);
-    printf("Текущее время: День %d, %02d:00\n", day, hour); // Добавили время!
+    printf("\n=== ГЉГЂГђГ’ГЋГ—ГЉГЂ ГЏГ…ГђГ‘ГЋГЌГЂГ†ГЂ ===\n");
+    printf("Г€Г¬Гї: %s\n", p->name);
+    printf("Г‡Г¤Г®Г°Г®ГўГјГҐ: %d/%d\n", p->hp, p->max_hp);
+    printf("Г‚Г»Г­Г®Г±Г«ГЁГўГ®Г±ГІГј: %d/%d\n", p->stamina, p->max_stamina);
+    printf("Г‡Г®Г«Г®ГІГ®: %d\n", p->gold);
+    printf("Г’ГҐГЄГіГ№ГҐГҐ ГўГ°ГҐГ¬Гї: Г„ГҐГ­Гј %d, %02d:00\n", day, hour); // Г„Г®ГЎГ ГўГЁГ«ГЁ ГўГ°ГҐГ¬Гї!
 
-    printf("Инвентарь:\n");
+    printf("Г€Г­ГўГҐГ­ГІГ Г°Гј:\n");
     for (int i = 0; i < INVENTORY_SIZE; i++) {
         int id = p->inventory[i];
-        printf("  Слот %d: %s\n", i, item_names[id]); // Теперь выводим названия!
+        printf("  Г‘Г«Г®ГІ %d: %s\n", i, item_names[id]); // Г’ГҐГЇГҐГ°Гј ГўГ»ГўГ®Г¤ГЁГ¬ Г­Г Г§ГўГ Г­ГЁГї!
     }
 }
-//функция удаления игрока 
-void delete_player(Player** p) { //принимает адрес указателя на игрока 
+//ГґГіГ­ГЄГ¶ГЁГї ГіГ¤Г Г«ГҐГ­ГЁГї ГЁГЈГ°Г®ГЄГ  
+void delete_player(Player** p) { //ГЇГ°ГЁГ­ГЁГ¬Г ГҐГІ Г Г¤Г°ГҐГ± ГіГЄГ Г§Г ГІГҐГ«Гї Г­Г  ГЁГЈГ°Г®ГЄГ  
     if (*p != NULL) {
-        printf("Память структуры по адресу %p освобождена\n", (void*)*p); //%p-вывод адреса памяти 
+        printf("ГЏГ Г¬ГїГІГј Г±ГІГ°ГіГЄГІГіГ°Г» ГЇГ® Г Г¤Г°ГҐГ±Гі %p Г®Г±ГўГ®ГЎГ®Г¦Г¤ГҐГ­Г \n", (void*)*p); //%p-ГўГ»ГўГ®Г¤ Г Г¤Г°ГҐГ±Г  ГЇГ Г¬ГїГІГЁ 
         free(*p);
         *p = NULL;
     }
 }
 void handle_create_player(Player** p) {
-    if (*p != NULL) { // Если персонаж уже есть
-        printf("Персонаж уже существует. Точно удалить и создать нового? (1 - Да, 0 - Нет): ");
+    if (*p != NULL) { // Г…Г±Г«ГЁ ГЇГҐГ°Г±Г®Г­Г Г¦ ГіГ¦ГҐ ГҐГ±ГІГј
+        printf("ГЏГҐГ°Г±Г®Г­Г Г¦ ГіГ¦ГҐ Г±ГіГ№ГҐГ±ГІГўГіГҐГІ. Г’Г®Г·Г­Г® ГіГ¤Г Г«ГЁГІГј ГЁ Г±Г®Г§Г¤Г ГІГј Г­Г®ГўГ®ГЈГ®? (1 - Г„Г , 0 - ГЌГҐГІ): ");
         int confirm;
         if (scanf_s("%d", &confirm) == 1 && confirm == 1) {
-            delete_player(p);      // Удаляем старого
-            clear_buffer();        // Чистим буфер
-            create_player(p);      // Создаем нового
+            delete_player(p);      // Г“Г¤Г Г«ГїГҐГ¬ Г±ГІГ Г°Г®ГЈГ®
+            clear_buffer();        // Г—ГЁГ±ГІГЁГ¬ ГЎГіГґГҐГ°
+            create_player(p);      // Г‘Г®Г§Г¤Г ГҐГ¬ Г­Г®ГўГ®ГЈГ®
         }
         else {
-            printf("Создание отменено.\n");
+            printf("Г‘Г®Г§Г¤Г Г­ГЁГҐ Г®ГІГ¬ГҐГ­ГҐГ­Г®.\n");
             clear_buffer();
         }
     }
-    else { // Если персонажа еще нет
+    else { // Г…Г±Г«ГЁ ГЇГҐГ°Г±Г®Г­Г Г¦Г  ГҐГ№ГҐ Г­ГҐГІ
         clear_buffer();
         create_player(p);
     }
 }
 void show_inventory(Player* p, char item_names[MAX_ITEMS][MAX_NAME_LEN]) {
     if (p == NULL) {
-        printf("Сначала создайте персонажа!\n");
+        printf("Г‘Г­Г Г·Г Г«Г  Г±Г®Г§Г¤Г Г©ГІГҐ ГЇГҐГ°Г±Г®Г­Г Г¦Г !\n");
         return;
     }
     for (int i = 0; i < INVENTORY_SIZE; i++) {
         int id = p->inventory[i];
-        printf("Слот %d: %s\n", i, item_names[id]);
+        printf("Г‘Г«Г®ГІ %d: %s\n", i, item_names[id]);
     }
 }
-// Функция для пересчета максимальных характеристик
+// Г”ГіГ­ГЄГ¶ГЁГї Г¤Г«Гї ГЇГҐГ°ГҐГ±Г·ГҐГІГ  Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г»Гµ ГµГ Г°Г ГЄГІГҐГ°ГЁГ±ГІГЁГЄ
 void recalculate_stats(Player* p) {
-    if (p == NULL) return; //если игрока не существует 
-    // Сбрасываем к базовым значениям
+    if (p == NULL) return; //ГҐГ±Г«ГЁ ГЁГЈГ°Г®ГЄГ  Г­ГҐ Г±ГіГ№ГҐГ±ГІГўГіГҐГІ 
+    // Г‘ГЎГ°Г Г±Г»ГўГ ГҐГ¬ ГЄ ГЎГ Г§Г®ГўГ»Г¬ Г§Г­Г Г·ГҐГ­ГЁГїГ¬
     p->max_hp = 100;
     p->max_stamina = 50;
-    for (int i = 0; i < EQUIPMENT_SLOTS; i++) { //цикл по слотам экипировки 
-        p->max_hp += p->equipment[i].bonus_hp; //на каждом шаге цикла программа смотрит на бонусы надетой вещи и прибавляет их к текущим максимумам
+    for (int i = 0; i < EQUIPMENT_SLOTS; i++) { //Г¶ГЁГЄГ« ГЇГ® Г±Г«Г®ГІГ Г¬ ГЅГЄГЁГЇГЁГ°Г®ГўГЄГЁ 
+        p->max_hp += p->equipment[i].bonus_hp; //Г­Г  ГЄГ Г¦Г¤Г®Г¬ ГёГ ГЈГҐ Г¶ГЁГЄГ«Г  ГЇГ°Г®ГЈГ°Г Г¬Г¬Г  Г±Г¬Г®ГІГ°ГЁГІ Г­Г  ГЎГ®Г­ГіГ±Г» Г­Г Г¤ГҐГІГ®Г© ГўГҐГ№ГЁ ГЁ ГЇГ°ГЁГЎГ ГўГ«ГїГҐГІ ГЁГµ ГЄ ГІГҐГЄГіГ№ГЁГ¬ Г¬Г ГЄГ±ГЁГ¬ГіГ¬Г Г¬
         p->max_stamina += p->equipment[i].bonus_stamina;
     }
-    // Чтобы текущее здоровье не превышало максимальное
+    // Г—ГІГ®ГЎГ» ГІГҐГЄГіГ№ГҐГҐ Г§Г¤Г®Г°Г®ГўГјГҐ Г­ГҐ ГЇГ°ГҐГўГ»ГёГ Г«Г® Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ
     if (p->hp > p->max_hp) p->hp = p->max_hp;
     if (p->stamina > p->max_stamina) p->stamina = p->max_stamina;
 }
 
-// Функция надевания вещи
-void equip_item(Player* p, Equipment item) { //принимает игрока и вещь 
+// Г”ГіГ­ГЄГ¶ГЁГї Г­Г Г¤ГҐГўГ Г­ГЁГї ГўГҐГ№ГЁ
+void equip_item(Player* p, Equipment item) { //ГЇГ°ГЁГ­ГЁГ¬Г ГҐГІ ГЁГЈГ°Г®ГЄГ  ГЁ ГўГҐГ№Гј 
     if (p == NULL) return;
-    if (item.slot >= 0 && item.slot < EQUIPMENT_SLOTS) { //проверка есть ли такой слот 
-        // Надеваем вещь в нужный слот
+    if (item.slot >= 0 && item.slot < EQUIPMENT_SLOTS) { //ГЇГ°Г®ГўГҐГ°ГЄГ  ГҐГ±ГІГј Г«ГЁ ГІГ ГЄГ®Г© Г±Г«Г®ГІ 
+        // ГЌГ Г¤ГҐГўГ ГҐГ¬ ГўГҐГ№Гј Гў Г­ГіГ¦Г­Г»Г© Г±Г«Г®ГІ
         p->equipment[item.slot] = item;
-        printf("Вы надели: %s\n", item.name);
-        // Пересчитываем характеристики
-        recalculate_stats(p); //вызов функции чтобы ,чтобы пересчитать здоровье и выносливость после того, как надели вещь
-        printf("Новые характеристики: HP %d/%d | Выносливость %d/%d\n", p->hp, p->max_hp, p->stamina, p->max_stamina);
+        printf("Г‚Г» Г­Г Г¤ГҐГ«ГЁ: %s\n", item.name);
+        // ГЏГҐГ°ГҐГ±Г·ГЁГІГ»ГўГ ГҐГ¬ ГµГ Г°Г ГЄГІГҐГ°ГЁГ±ГІГЁГЄГЁ
+        recalculate_stats(p); //ГўГ»Г§Г®Гў ГґГіГ­ГЄГ¶ГЁГЁ Г·ГІГ®ГЎГ» ,Г·ГІГ®ГЎГ» ГЇГҐГ°ГҐГ±Г·ГЁГІГ ГІГј Г§Г¤Г®Г°Г®ГўГјГҐ ГЁ ГўГ»Г­Г®Г±Г«ГЁГўГ®Г±ГІГј ГЇГ®Г±Г«ГҐ ГІГ®ГЈГ®, ГЄГ ГЄ Г­Г Г¤ГҐГ«ГЁ ГўГҐГ№Гј
+        printf("ГЌГ®ГўГ»ГҐ ГµГ Г°Г ГЄГІГҐГ°ГЁГ±ГІГЁГЄГЁ: HP %d/%d | Г‚Г»Г­Г®Г±Г«ГЁГўГ®Г±ГІГј %d/%d\n", p->hp, p->max_hp, p->stamina, p->max_stamina);
     }
     else {
-        printf("Ошибка: неверный слот экипировки!\n");
+        printf("ГЋГёГЁГЎГЄГ : Г­ГҐГўГҐГ°Г­Г»Г© Г±Г«Г®ГІ ГЅГЄГЁГЇГЁГ°Г®ГўГЄГЁ!\n");
     }
 }
-void handle_equipment_menu(Player* p) { //функция управления экипировкой, принимает указатель на игрока 
+void handle_equipment_menu(Player* p) { //ГґГіГ­ГЄГ¶ГЁГї ГіГЇГ°Г ГўГ«ГҐГ­ГЁГї ГЅГЄГЁГЇГЁГ°Г®ГўГЄГ®Г©, ГЇГ°ГЁГ­ГЁГ¬Г ГҐГІ ГіГЄГ Г§Г ГІГҐГ«Гј Г­Г  ГЁГЈГ°Г®ГЄГ  
     if (p == NULL) {
-        printf("Сначала создайте персонажа!\n");
+        printf("Г‘Г­Г Г·Г Г«Г  Г±Г®Г§Г¤Г Г©ГІГҐ ГЇГҐГ°Г±Г®Г­Г Г¦Г !\n");
         return;
     }
 
-    int choice; //выбор огрока 
+    int choice; //ГўГ»ГЎГ®Г° Г®ГЈГ°Г®ГЄГ  
     while (1) {
-        printf("\n=== УПРАВЛЕНИЕ СНАРЯЖЕНИЕМ ===\n");
-        printf("Текущая экипировка:\n");
-        printf("  Голова: %s (HP +%d, Stamina +%d)\n", p->equipment[SLOT_HEAD].name, p->equipment[SLOT_HEAD].bonus_hp, p->equipment[SLOT_HEAD].bonus_stamina); //что надеото на голову, бонус к силе и выносливости 
-        printf("  Тело:   %s (HP +%d, Stamina +%d)\n", p->equipment[SLOT_BODY].name, p->equipment[SLOT_BODY].bonus_hp, p->equipment[SLOT_BODY].bonus_stamina);//
-        printf("  Обувь:  %s (HP +%d, Stamina +%d)\n", p->equipment[SLOT_FEET].name, p->equipment[SLOT_FEET].bonus_hp, p->equipment[SLOT_FEET].bonus_stamina);
+        printf("\n=== Г“ГЏГђГЂГ‚Г‹Г…ГЌГ€Г… Г‘ГЌГЂГђГџГ†Г…ГЌГ€Г…ГЊ ===\n");
+        printf("Г’ГҐГЄГіГ№Г Гї ГЅГЄГЁГЇГЁГ°Г®ГўГЄГ :\n");
+        printf("  ГѓГ®Г«Г®ГўГ : %s (HP +%d, Stamina +%d)\n", p->equipment[SLOT_HEAD].name, p->equipment[SLOT_HEAD].bonus_hp, p->equipment[SLOT_HEAD].bonus_stamina); //Г·ГІГ® Г­Г Г¤ГҐГ®ГІГ® Г­Г  ГЈГ®Г«Г®ГўГі, ГЎГ®Г­ГіГ± ГЄ Г±ГЁГ«ГҐ ГЁ ГўГ»Г­Г®Г±Г«ГЁГўГ®Г±ГІГЁ 
+        printf("  Г’ГҐГ«Г®:   %s (HP +%d, Stamina +%d)\n", p->equipment[SLOT_BODY].name, p->equipment[SLOT_BODY].bonus_hp, p->equipment[SLOT_BODY].bonus_stamina);//
+        printf("  ГЋГЎГіГўГј:  %s (HP +%d, Stamina +%d)\n", p->equipment[SLOT_FEET].name, p->equipment[SLOT_FEET].bonus_hp, p->equipment[SLOT_FEET].bonus_stamina);
 
-        printf("\n1. Надеть Железный шлем (Голова, +20 HP)\n");
-        printf("2. Надеть Кожаную броню (Тело, +10 HP, +15 Stamina)\n");
-        printf("3. Надеть Сапоги скорости (Обувь, +10 Stamina)\n");
-        printf("0. Снять всю экипировку\n");
-        printf("-1. Назад в главное меню\n");
-        printf("Ваш выбор: ");
+        printf("\n1. ГЌГ Г¤ГҐГІГј Г†ГҐГ«ГҐГ§Г­Г»Г© ГёГ«ГҐГ¬ (ГѓГ®Г«Г®ГўГ , +20 HP)\n");
+        printf("2. ГЌГ Г¤ГҐГІГј ГЉГ®Г¦Г Г­ГіГѕ ГЎГ°Г®Г­Гѕ (Г’ГҐГ«Г®, +10 HP, +15 Stamina)\n");
+        printf("3. ГЌГ Г¤ГҐГІГј Г‘Г ГЇГ®ГЈГЁ Г±ГЄГ®Г°Г®Г±ГІГЁ (ГЋГЎГіГўГј, +10 Stamina)\n");
+        printf("0. Г‘Г­ГїГІГј ГўГ±Гѕ ГЅГЄГЁГЇГЁГ°Г®ГўГЄГі\n");
+        printf("-1. ГЌГ Г§Г Г¤ Гў ГЈГ«Г ГўГ­Г®ГҐ Г¬ГҐГ­Гѕ\n");
+        printf("Г‚Г Гё ГўГ»ГЎГ®Г°: ");
         if (scanf_s("%d", &choice) != 1) {
-            printf("Неверный ввод\n");
+            printf("ГЌГҐГўГҐГ°Г­Г»Г© ГўГўГ®Г¤\n");
             scanf_s("%*s");
             continue;
         }
@@ -154,29 +154,29 @@ void handle_equipment_menu(Player* p) { //функция управления экипировкой, приним
         if (choice == -1) break;
 
         if (choice == 1) {
-            Equipment helmet = { "Железный шлем", SLOT_HEAD, 20, 0 };
+            Equipment helmet = { "Г†ГҐГ«ГҐГ§Г­Г»Г© ГёГ«ГҐГ¬", SLOT_HEAD, 20, 0 };
             equip_item(p, helmet);
         }
         else if (choice == 2) {
-            Equipment armor = { "Кожаная броня", SLOT_BODY, 10, 15 };
+            Equipment armor = { "ГЉГ®Г¦Г Г­Г Гї ГЎГ°Г®Г­Гї", SLOT_BODY, 10, 15 };
             equip_item(p, armor);
         }
         else if (choice == 3) {
-            Equipment boots = { "Сапоги скорости", SLOT_FEET, 0, 10 };
+            Equipment boots = { "Г‘Г ГЇГ®ГЈГЁ Г±ГЄГ®Г°Г®Г±ГІГЁ", SLOT_FEET, 0, 10 };
             equip_item(p, boots);
         }
         else if (choice == 0) {
-            // Снимаем всё
+            // Г‘Г­ГЁГ¬Г ГҐГ¬ ГўГ±Вё
             for (int i = 0; i < EQUIPMENT_SLOTS; i++) {
-                strcpy(p->equipment[i].name, "Пусто");
+                strcpy(p->equipment[i].name, "ГЏГіГ±ГІГ®");
                 p->equipment[i].bonus_hp = 0;
                 p->equipment[i].bonus_stamina = 0;
             }
             recalculate_stats(p);
-            printf("Вся экипировка снята. Характеристики вернулись к базовым.\n");
+            printf("Г‚Г±Гї ГЅГЄГЁГЇГЁГ°Г®ГўГЄГ  Г±Г­ГїГІГ . Г•Г Г°Г ГЄГІГҐГ°ГЁГ±ГІГЁГЄГЁ ГўГҐГ°Г­ГіГ«ГЁГ±Гј ГЄ ГЎГ Г§Г®ГўГ»Г¬.\n");
         }
         else {
-            printf("Неверный пункт меню\n");
+            printf("ГЌГҐГўГҐГ°Г­Г»Г© ГЇГіГ­ГЄГІ Г¬ГҐГ­Гѕ\n");
         }
     }
 }
