@@ -1,4 +1,4 @@
-#ifndef UTILS_H //// Защита от повторного включения
+#ifndef UTILS_H //// Р—Р°С‰РёС‚Р° РѕС‚ РїРѕРІС‚РѕСЂРЅРѕРіРѕ РІРєР»СЋС‡РµРЅРёСЏ
 #define UTILS_H
 #include "player.h"
 #define MAX_ITEMS 10
